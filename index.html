@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bloxflip Mines Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #000000; /* Black background */
+      color: white;
+      flex-direction: column;
+      font-family: 'Fredoka', sans-serif; /* Apply the font */
+    }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(5, 100px);
+      grid-gap: 5px;
+    }
+    .square {
+      width: 100px;
+      height: 100px;
+      background-color: #111111; /* Dark gray block color */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: white;
+      border-radius: 10px; /* Rounded corners */
+      font-family: 'Fredoka', sans-serif; /* Apply the font */
+    }
+    #predict-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+      background-color: #111111; /* Dark gray button color */
+      color: white;
+      border: none;
+      border-radius: 10px; /* Rounded corners */
+      font-family: 'Fredoka', sans-serif; /* Apply the font */
+    }
+    #bomb-input {
+      margin-top: 20px;
+      padding: 5px;
+      font-size: 18px;
+      width: 50px;
+      background-color: #111111; /* Dark gray input color */
+      color: white;
+      border: none;
+      border-radius: 10px; /* Rounded corners */
+      text-align: center;
+      font-family: 'Fredoka', sans-serif; /* Apply the font */
+    }
+    /* Number input arrows hide */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-board"></div>
+  <input type="number" id="bomb-input" min="1" max="24" placeholder="Bombs" />
+  <button id="predict-button">Show Prediction</button>
+  <script>
+    const gameBoard = document.getElementById('game-board');
+    const predictButton = document.getElementById('predict-button');
+    const bombInput = document.getElementById('bomb-input');
+    const gridSize = 25; // 5x5 grid
+    let bombPositions = [];
+
+    function initGame() {
+      gameBoard.innerHTML = '';
+      bombPositions = [];
+      createGrid();
+    }
+
+    function createGrid() {
+      for (let i = 0; i < gridSize; i++) {
+        const square = document.createElement('div');
+        square.classList.add('square');
+        gameBoard.appendChild(square);
+      }
+    }
+
+    function placeBombs() {
+      const bombCount = parseInt(bombInput.value) || 0;
+      if (bombCount < 1 || bombCount > 24) {
+        alert("Please enter a number between 1 and 24.");
+        return;
+      }
+      bombPositions = [];
+      while (bombPositions.length < bombCount) {
+        const bombPosition = Math.floor(Math.random() * gridSize);
+        if (!bombPositions.includes(bombPosition)) {
+          bombPositions.push(bombPosition);
+        }
+      }
+    }
+
+    function showPrediction() {
+      placeBombs();
+      for (let i = 0; i < gridSize; i++) {
+        const square = gameBoard.children[i];
+        if (bombPositions.includes(i)) {
+          square.innerHTML = '&#128163;'; // Unicode for bomb emoji
+        } else {
+          square.innerHTML = '⭐'; // Empty for non-bomb squares
+        }
+        square.style.pointerEvents = 'none'; // Prevent further clicks
+      }
+    }
+
+    predictButton.addEventListener('click', showPrediction);
+
+    initGame();
+  </script>
+</body>
+</html>
